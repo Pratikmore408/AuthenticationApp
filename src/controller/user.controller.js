@@ -1,3 +1,4 @@
+import {sendMail} from "../config/nodemailer.js";
 import UserModel from "../model/user.model.js";
 import UserRepository from "../repository/user.repository.js";
 import bcrypt from 'bcrypt'
@@ -80,6 +81,7 @@ export default  class UserController{
             if(result){  
                 // if password is correct set the session email with current user email
                 req.session.userEmail = email;
+                await sendMail(email);
                 // render the home page
                 res.render('home',{
                     userEmail: req.session.userEmail,
