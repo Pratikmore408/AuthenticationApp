@@ -7,6 +7,7 @@ import passport from 'passport';
 
 const userRouter = express.Router();
 
+// create controller intance
 const userController = new UserController();
 
 userRouter.get('/', auth, (req, res)=>{
@@ -33,8 +34,9 @@ userRouter.get('/signout', auth, (req, res)=>{
     userController.signOut(req, res)
 });
 
+// route to req google authentication
 userRouter.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
-
+// // route to handle google callback
 userRouter.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/signin'}), (req, res)=>{
     userController.getHome(req, res)});
 

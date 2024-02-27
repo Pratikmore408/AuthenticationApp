@@ -15,8 +15,10 @@ import mongoose from 'mongoose';
 const UserModel = mongoose.model('User', userSchema);
 
 dotenv.config();
+// create the server
 const app = express();
 
+// configure session
 app.use(session({
     secret: process.env.SECRET,
     resave:false,
@@ -28,7 +30,7 @@ app.use(cookieParser());
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
-
+// set the view engine
 app.set('view engine', 'ejs');
 app.set("views", path.join(path.resolve(), 'src', 'view'))
 app.use(ejsLayouts);
@@ -36,19 +38,10 @@ app.use(ejsLayouts);
 app.use(passport.initialize());
 app.use(passport.session());
 
+// serialize and deserialize the user
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
-
-// passport.deserializeUser(async (id, done) => {
-//     try {
-//         const user = await UserModel.findById(id);
-//         done(null, user);
-        
-//     } catch (err) {
-//         done(err, null);
-//     }
-// });
 
 passport.deserializeUser(async (req, id, done) => {
     try {
@@ -56,6 +49,7 @@ passport.deserializeUser(async (req, id, done) => {
         if (!user) {
             return done(new Error('User not found'));
         }
+        // set the session with use email
         req.session.userEmail = user.email;
         done(null, user);
     } catch (err) {
@@ -63,9 +57,12 @@ passport.deserializeUser(async (req, id, done) => {
     }
 });
 
+// call the user router
 app.use('/', userRouter);
+
 app.use(express.static('src/view'))
 
+// listen the server
 app.listen(4000, (req, res)=>{
     console.log(`app is running on port 4000`);
     connectToDb();

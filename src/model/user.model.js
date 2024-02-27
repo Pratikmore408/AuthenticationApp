@@ -1,4 +1,4 @@
-
+// user model
 
 export default class UserModel{
     constructor(name, email, password){
